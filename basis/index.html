@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Basis of Vue</title>
+  <style>
+    .danger {
+      color: #f00
+    }
+    .success {
+      color: #0f0
+    }
+    .bold {
+      font-weight: 900;
+    }
+    .underline {
+      text-decoration: underline
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+  <div id="app">
+    <h1 id="h1">{{title}}</h1>
+
+    <p :title="message">鼠标放在此处查看当前时间</p>
+    <hr>
+
+    <p v-if="showAlert">这里是警告</p>
+    <hr>
+
+    <p>下面是我的车：</p>
+    <ul v-for="car in cars">
+      <li>{{car.name}}</li>
+    </ul>
+    <hr>
+
+    <button @click="reverseStr">反转下方文本</button>
+    <p>{{hello}}</p>
+    <hr>
+
+    <p>双向绑定：<input type="text" v-model="info" @change="inputChange" /></p>
+    <hr>
+
+    <p>父组件遍历，向子组件传值：</p>
+    <ol>
+      <todo-item v-for="item in itemList" :todo="item" :key="item.id"></todo-item>
+    </ol>
+    <hr>
+
+    <p v-once>只插值一次：{{onceText}} <button @click="changeOnceText">点我也不变</button></p>
+    <hr>
+
+    <p>直接渲染：<span>{{htmlStr}}</span></p>
+    <p>添加v-html指令渲染：<span v-html="htmlStr"></span></p>
+    <hr>
+
+    <form action="http://www.baidu.com" @submit.prevent="formSubmit">
+      阻止表单默认提交：<input type="submit" />
+    </form>
+    <hr>
+
+    <p style="color: #00f">建议：用计算属性替换复杂的插值表达式</p>
+    <p>hello world反转：<span>{{reversedHello}}</span></p>
+    <hr>
+
+    <p>watch的使用：<input type="text" v-model="watchedStr" /></p>
+    <p v-html="answerStr"></p>
+    <hr>
+
+    <p>利用计算属性绑定class：<span :class="classObject">isSuccess == true</span></p>
+    <p>利用数组绑定class：<span :class="[{success: isSuccess}, 'bold']">[{success: isSuccess}, 'bold']</span></p>
+    <hr>
+
+    <p>在子组件上绑定class，原有class不会被覆盖掉</p>
+    <child-style class="danger" :style="styleObject"></child-style>
+    <hr>
+
+    <div :style="{display: ['-webkit-box', '-ms-flexbox', 'flex']}">样式绑定也可以绑定对象、数组</div>
+    <hr>
+
+    
+  </div>
+</body>
+
+<script>
+  Vue.component('todo-item', {
+    props: ['todo'],
+    template: '<li>{{ todo.text }}</li>'
+  })
+
+  Vue.component('child-style', {
+    template: '<span class="underline">用来看子组件样式绑定效果</span>'
+  })
+
+  const title = new Vue({
+    el: '#app',
+    data: {
+      title: 'Vue基础',
+      message: new Date().toLocaleTimeString(),
+      showAlert: true,
+      cars: [{name: 'BMW'}, {name: 'Ferria'}, {name: 'Bugatti'}],
+      hello: 'hello world',
+      info: 'hahaha',
+      itemList: [{id: 1, text: 'child1'}, {id: 2, text: 'child2'}, {id: 3, text: 'child3'}],
+      onceText: '我就是我',
+      htmlStr: '<span style="color: red">Hello World</span>',
+      watchedStr: '',
+      answerStr: '',
+      isSuccess: true,
+      isDanger: false
+    },
+    computed: { // 计算属性与methods类似，区别是data中数据有变化才进行缓存（监听），而不是每次都执行计算
+      reversedHello: function() {
+        return this.hello.split('').reverse().join('')
+      },
+      classObject: function() {
+        return {
+          'success': this.isSuccess,
+          'danger': this.isDanger
+        }
+      },
+      styleObject: function() {
+        return {
+          fontFamily: 'STXingkai',
+          fontSize: '18px'
+        }
+      }
+    },
+    methods: {
+      reverseStr: function() {
+        this.hello = this.hello.split('').reverse().join('')
+      },
+      inputChange: function() {
+        alert('你输入了' + this.info)
+      },
+      changeOnceText: function() {
+        this.onceText = '我居然改变了'
+      },
+      formSubmit: function() {
+        alert('表单默认事件被我拦截了，现在用自定义事件提交')
+      }
+    },
+    watch: {
+      watchedStr: function(newVal, oldVal) {
+        this.answerStr = 'oldVal: <b>' + oldVal + '</b> newVal: <b>' + newVal + '</b>'
+      }
+    },
+    mounted: function() {
+      console.log('vue is mounted, here to call AJAX')
+    }
+  })
+</script>
+</html>
