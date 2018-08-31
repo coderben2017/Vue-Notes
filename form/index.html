@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>表单输入绑定</title>
+</head>
+
+<body style="background: #f6f6d5">
+  <h2>表单输入绑定&emsp;<sub><a style="text-decoration: none" href="../index.html">返回导航</a></sub></h2>
+  <div id="form-input">
+    <p>一组多选框可使用v-model绑定在一个数组上</p>
+    <form>
+      <label for="bmw">BMW</label>
+      <input type="checkbox" id="bmw" value="1" v-model="checkedValues" />
+      
+      <label for="ferrari">Ferrari</label>
+      <input type="checkbox" id="ferrari" value="2" v-model="checkedValues" />
+      
+      <label for="bugatti">Buggati</label>
+      <input type="checkbox" id="buggati" value="3" v-model="checkedValues" />
+    </form>
+    <p>选择的值：{{checkedValues}}</p>
+    <hr>
+
+    <p>一组单选框可使用v-model绑定在一个值上</p>
+    <form>
+      <label for="bmw">BMW</label>
+      <input type="radio" id="bmw" value="1" v-model="car" />
+      
+      <label for="ferrari">Ferrari</label>
+      <input type="radio" id="ferrari" value="2" v-model="car" />
+      
+      <label for="bugatti">Buggati</label>
+      <input type="radio" id="buggati" value="3" v-model="car" />
+    </form>
+    <p>选择的值：{{car}}</p>
+    <hr>
+
+    <p>注：&lt;select&gt;的多选、单选也可采用上述绑定方式</p>
+    <hr>
+
+    <p>v-model的修饰符</p>
+    <p>
+      <code>&lt;input v-model.lazy="someValue" type="text" /&gt;</code>&emsp;
+      在change事件更新，而不是在input事件更新
+    </p>
+    <p>
+      <code>&lt;input v-model.number="someValue" type="number" /&gt;</code>&emsp;
+      修正v-model绑定number类型input返回字符串问题
+    </p>
+    <p>
+      <code>&lt;input v-model.trim="someValue" type="text" /&gt;</code>&emsp;
+      过滤用户输入的前后空格
+    </p>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  const formInput = new Vue({
+    el: '#form-input',
+    data: {
+      checkedValues: [],
+      car: ''
+    }
+  }) 
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>事件修饰符</title>
+</head>
+
+<body style="background: #f6f6d5">
+  <div id="modifier">
+    <h2>事件修饰符&emsp;<sub><a style="text-decoration: none" href="../index.html">返回导航</a></sub></h2>
+    <p>
+      <code>&lt;button @click.stop="doSomething"&gt;停止冒泡&lt;/button&gt;</code>&emsp;
+      等同event.stopPropagation
+    </p>
+    <p>
+      <code>&lt;form @submit.prevent="doSomething"&gt;阻止默认提交&lt;/button&gt;</code>&emsp;
+      这样提交表单不会刷新页面
+    </p>
+    <p>
+      <code>&lt;a @click.stop.prevent="doSomething"&gt;事件修饰符可以串联&lt;/a&gt;</code>&emsp;
+      类似jQuery $element.css(...).show()
+    </p>
+    <p>
+      <code>&lt;div @click.capture="doSomething"&gt;添加事件捕获&lt;/div&gt;</code>&emsp;
+      元素事件先被捕获处理，然后再交给内部元素处理
+    </p>
+    <p>
+      <code>&lt;div @click.self="doSomething"&gt;在点击自身时触发doSomething函数&lt;/div&gt;</code>&emsp;
+      所以会忽略冒泡而来的事件
+    </p>
+    <p>
+      <code>&lt;button @click.once="doSomething"&gt;只会触发一次&lt;/button&gt;</code>&emsp;
+    </p>
+    <p>
+      <code>&lt;div @scroll.passive="doSomething"&gt;滚动即触发&lt;/div&gt;</code>&emsp;
+      放行默认事件，与.prevent修饰符正好相反
+    </p>
+    <p style="color: #66f">注：修饰符串联时，顺序很重要！！！</p>
+    <hr>
+
+    <h4>按键修饰符</h4>
+    <p>
+      <code>&lt;input @keyup.13="doSomething" /&gt;</code>&emsp;
+      输入字符keyCode=13时触发
+    </p>
+    <p>
+      <code>&lt;input @keyup.enter="doSomething" /&gt;</code>&emsp;
+      输入回车：<input type="text" @keyup.enter="inputEnter" />
+    </p>
+    <p>
+      <code>&lt;input @keyup.space="doSomething" /&gt;</code>&emsp;
+      输入space：<input type="text" @keyup.tab="inputSpace" placeholder="不大好使" />
+    </p>
+    <p>
+      <code>&lt;input @keyup.tab="doSomething" /&gt;</code>&emsp;
+      输入tab：<input type="text" @keyup.tab="inputTab" placeholder="不大好使" />
+    </p>
+    <p>
+      <code>&lt;input @keyup.delete="doSomething" /&gt;</code>&emsp;
+      输入删除和退格键：<input type="text" @keyup.tab="inputDelete" placeholder="不大好使" />
+    </p>
+    <p>
+      <code>&lt;input @keyup.aaa="doSomething" /&gt;</code>&emsp;
+      自定义keycode 65 = aaa，请输入a尝试：<input type="text" @keyup.aaa="inputA" />
+    </p>
+    <p>类似的语义化修饰符还有：<code style="background: #ccc; padding: 5px">.esc .up .down .left .right</code></p>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  // 设置按键别名
+  Vue.config.keyCodes = {
+    aaa: 65
+  }
+
+  const modifier = new Vue({
+    el: '#modifier',
+    methods: {
+      inputEnter: function() {
+        alert(event.target.tagName.toLowerCase() + ': 你输入了回车')
+      },
+      inputTab: function() {
+        alert(event.target.tagName.toLowerCase() + ': 你输入了Tab')
+      },
+      inputSpace: function() {
+        alert(event.target.tagName.toLowerCase() + ': 你输入了Space')
+      },
+      inputDelete: function() {
+        alert(event.target.tagName.toLowerCase() + ': 你输入了Delete')
+      },
+      inputA: function() {
+        alert(event.target.tagName.toLowerCase() + ': 你触发了自定义的aaa修饰符')
+      }
+    }
+  })
+</script>
+</body>
+</html>
