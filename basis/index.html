@@ -19,7 +19,6 @@
       text-decoration: underline
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
   <div id="app">
@@ -28,7 +27,10 @@
     <p :title="message">鼠标放在此处查看当前时间</p>
     <hr>
 
-    <p v-if="showAlert">这里是警告</p>
+    <!-- if/esle元素需要紧挨着 -->
+    <p v-if="Math.random() >= 0.8">随机给分优秀</p>
+    <p v-else-if="Math.random() >= 0.6">随机给分及格</p>
+    <p v-else>随机给分不及格</p>
     <hr>
 
     <p>下面是我的车：</p>
@@ -81,10 +83,37 @@
     <div :style="{display: ['-webkit-box', '-ms-flexbox', 'flex']}">样式绑定也可以绑定对象、数组</div>
     <hr>
 
+    <p>v-show和v-if的区别：</p>
+    <p v-show="showMessage">v-show操作display属性，会正常渲染保留在DOM中。初次渲染开销大，频繁切换开销小。</p>
+    <p v-if="showMessage">v-if控制元素是否进入DOM渲染，初次渲染开销小，频繁切换开销大</p>
+    <p>注：v-if和v-for一起使用时，v-for具有更高优先级</p>
+    <hr>
+
+    <p>v-for细节</p>
+    <p>(item, index) in/of Array</p>
+    <p>(value, key, index) in Object</p>
+    <table border="1" style="border-collapse: collapse">
+      <tr v-for="(value, key, index) in vForObject" key="index"><!-- 建议v-for绑定key以便Vue追踪 -->
+        <td>{{index}}</td>
+        <td>{{key}}</td>
+        <td>{{value}}</td>
+      </tr>
+    </table>
+    <hr>
+
+    <h3>通过以下方式修改数组，不触发Vue检测</h3>
+    <ul><li v-for="car of cars">{{car.name}}</li></ul>
+    <button @click="pushCar">通过 array[array.length]] = newItem 加车</button><br>
+    <button @click="popCar">通过 array.length-- 减车</button>
+    <hr>
+
+    <p>v-for="i in 10"</p>
+    <p>i：<span v-for="i in 10">{{i}} </span></p>
+
     
   </div>
-</body>
 
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script>
   Vue.component('todo-item', {
     props: ['todo'],
@@ -100,7 +129,6 @@
     data: {
       title: 'Vue基础',
       message: new Date().toLocaleTimeString(),
-      showAlert: true,
       cars: [{name: 'BMW'}, {name: 'Ferria'}, {name: 'Bugatti'}],
       hello: 'hello world',
       info: 'hahaha',
@@ -110,7 +138,9 @@
       watchedStr: '',
       answerStr: '',
       isSuccess: true,
-      isDanger: false
+      isDanger: false,
+      showMessage: true,
+      vForObject: {name: 'jinben', age: 23, car: 'Bugatti'}
     },
     computed: { // 计算属性与methods类似，区别是data中数据有变化才进行缓存（监听），而不是每次都执行计算
       reversedHello: function() {
@@ -141,6 +171,12 @@
       },
       formSubmit: function() {
         alert('表单默认事件被我拦截了，现在用自定义事件提交')
+      },
+      pushCar: function() {
+        this.cars[this.cars.length] = {name: 'pushed car'}
+      },
+      popCar: function() {
+        this.cars.length--
       }
     },
     watch: {
@@ -148,9 +184,13 @@
         this.answerStr = 'oldVal: <b>' + oldVal + '</b> newVal: <b>' + newVal + '</b>'
       }
     },
+    created: function() {
+      this.cars.splice(0, 1, {name: 'BMW X7'})
+    },
     mounted: function() {
       console.log('vue is mounted, here to call AJAX')
     }
   })
 </script>
+</body>
 </html>
