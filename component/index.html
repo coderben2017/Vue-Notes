@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>组件基础</title>
+  <style>
+    .btn-tab {
+      width: 60px;
+      height: 28px;
+      background: #ccc;
+    }
+    .active {
+      background: #999;
+    }
+  </style>
+</head>
+
+<body style="background: #f6f6d5">
+  <h2>组件基础&emsp;<sub><a style="text-decoration: none" href="../index.html">返回导航</a></sub></h2>
+  <div id="component">
+    <p>
+      Vue组件的data必须是方法，这样才能在渲染克隆一份独立数据，避免多个组件相互影响
+    </p>
+    <clicker-obj-data></clicker-obj-data>
+    <clicker-obj-data></clicker-obj-data>
+    <clicker-obj-data></clicker-obj-data><br>
+    <clicker-func-data></clicker-func-data>
+    <clicker-func-data></clicker-func-data>
+    <clicker-func-data></clicker-func-data>
+    <hr>
+
+    <p :style="{fontSize: fontSize + 'em'}">我是被操作文字我是被操作文字</p>
+    <chind-event @font-size="setFontSize($event)"></chind-event>
+    <hr>
+
+    <p>在组件上绑定v-model</p>
+    子组件：<custom-input v-model="customInputValue"></custom-input>&emsp;
+    子组件传回来的值：{{customInputValue}}
+    <hr>
+
+    <p>组件插槽slot的使用</p>
+    <slot-demo>我是插槽的内容</slot-demo>
+    <hr>
+
+    <p>动态组件</p>
+    <button 
+      v-for="tab in tabs"
+      :key="tab"
+      :class="['btn-tab', {'active': tab === currentTab}]"
+      @click="setCurrentTab(tab)"
+    >{{tab}}</button>
+    <div :is="currentTab" style="width: 200px; height: 80px; border: 2px dashed"></div>
+    <hr>
+
+    <p>给prop添加数据校验</p>
+    <props-demo :text="'helloworld'" :count="'99'" data-date-picker="actived"></props-demo>
+    <p>注1：没有prop接收的数据会添加到组件内的根元素上，如data-date-picker="actived"已经添加到了本组件的
+      &lt;p&gt;元素上</p>
+    <p>注2：上述无prop属性默认添加到组件模版的根元素上。如果想把属性添加到其他元素上，
+      可以在组件定义中设置<b>inheritAttrs: false</b>，并在接收属性的元素上绑定<b>v-bind="$attrs"</b></p>
+    <hr>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  Vue.component('clicker-obj-data', {
+    data: {
+      count: 0
+    },
+    template: '<button @click="++count">you click me {{count}} times</button>'
+  })
+
+  Vue.component('clicker-func-data', {
+    data: function() {
+      return {
+        count: 0
+      }
+    },
+    template: '<button @click="++count">you click me {{count}} times</button>'
+  })
+
+  Vue.component('chind-event', {
+    template: '<button @click="$emit(\'font-size\', 0.1)">增大字号</button>'
+  })
+
+  Vue.component('custom-input', {
+    props: ['value'],
+    template: '<input type="text" :value="value" @input="$emit(\'input\', $event.target.value)" />'
+  })
+
+  Vue.component('slot-demo', {
+    template: '<div>我是组件模板的内容&nbsp;<b><slot></slot></b>&nbsp;我是组件模板的内容</div>'
+  })
+
+  Vue.component('A', {
+    template: '<div>我是子组件A</div>'
+  })
+  Vue.component('B', {
+    template: '<div>我是子组件B</div>'
+  })
+  Vue.component('C', {
+    template: '<div>我是子组件C</div>'
+  })
+
+  Vue.component('props-demo', {
+    props: {
+      text: String, // prop校验发生在组件实例创建前,所以default()和validator()方法不能调用data、computed等中的值
+      count: Number, // 此处由于该页面没有工程化构建，所以传入String类型值也没有报错
+      flag: [Number, Boolean],
+      obj: {
+        type: Object,
+        required: true,
+        default: function() { // 对象、数组类型的默认值必须使用工厂函数赋值
+          return {title: 'hello'}
+        }
+      },
+      car: {
+        validator: function(value) { // 这个值必须匹配下列字符串中的一个
+          return ['BMW', 'Ferrari', 'Bugatti'].indexOf(value) !== -1
+        }
+      }
+    },
+    template: '<p>text: {{text}}&emsp;car: <span v-text="count"></span></p>'
+  })
+
+  const comp = new Vue({
+    el: '#component',
+    data: function() {
+      return {
+        fontSize: 1,
+        customInputValue: '',
+        tabs: ['A', 'B', 'C'],
+        currentTab: 'A'
+      }
+    },
+    methods: {
+      setFontSize: function(event) {
+        this.fontSize += event
+      },
+      setCurrentTab: function(tab) {
+        this.currentTab = tab
+      }
+    }
+  })
+</script>
+</body>
+</html>
