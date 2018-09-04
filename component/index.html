@@ -61,6 +61,16 @@
     <p>注2：上述无prop属性默认添加到组件模版的根元素上。如果想把属性添加到其他元素上，
       可以在组件定义中设置<b>inheritAttrs: false</b>，并在接收属性的元素上绑定<b>v-bind="$attrs"</b></p>
     <hr>
+
+    <p>自定义v-modal绑定值和事件</p>
+    <my-checkbox v-model="myCheckboxValue"></my-checkbox>
+    <p>{{myCheckboxValue}}</p>
+    <hr>
+
+    <p>自定义组件内的事件绑定元素</p>
+    <my-input :label="'label:'" @input="onMyInputInput"></my-input>
+    <hr>
+
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -125,6 +135,28 @@
     template: '<p>text: {{text}}&emsp;car: <span v-text="count"></span></p>'
   })
 
+  Vue.component('my-checkbox', {
+    model: {
+      prop: 'checked',
+      event: 'change'
+    },
+    props: { // 一定要声明一下props，model只起配置的作用，不起接入prop的作用
+      checked: Boolean
+    },
+    template: `
+      <input type="checkbox" :checked="checked" @change="$emit('change', $event.target.checked)" />
+    `
+  })
+
+  Vue.component('my-input', {
+    props: ['label', 'value'],
+    template: `
+      <label>
+        {{label}} <input type="text" @input="$emit('input', $event.target.value)" />
+      </label>
+    `
+  })
+
   const comp = new Vue({
     el: '#component',
     data: function() {
@@ -132,7 +164,8 @@
         fontSize: 1,
         customInputValue: '',
         tabs: ['A', 'B', 'C'],
-        currentTab: 'A'
+        currentTab: 'A',
+        myCheckboxValue: false
       }
     },
     methods: {
@@ -141,6 +174,9 @@
       },
       setCurrentTab: function(tab) {
         this.currentTab = tab
+      },
+      onMyInputInput: function(event) {
+        console.log(event)
       }
     }
   })

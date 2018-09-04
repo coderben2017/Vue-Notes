@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>组件切换与状态缓存</title>
+  <style>
+    .tab-button {
+      padding: 6px 10px;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      background: #f0f0f0;
+      margin-bottom: -1px;
+      margin-right: -1px;
+    }
+    .tab-button:hover {
+      background: #e0e0e0;
+    }
+    .tab-button.active {
+      background: #e0e0e0;
+    }
+    .tab {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .posts-tab {
+      display: flex;
+    }
+    .posts-sidebar {
+      max-width: 40vw;
+      margin: 0;
+      padding: 0 10px 0 0;
+      list-style-type: none;
+      border-right: 1px solid #ccc;
+    }
+    .posts-sidebar li {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .posts-sidebar li:hover {
+      background: #eee;
+    }
+    .posts-sidebar li.selected {
+      background: #ccc;
+    }
+    .selected-post-container {
+      padding-left: 10px;
+    }
+    .selected-post > :first-child {
+      margin-top: 0;
+      padding-top: 0;
+    }
+  </style>
+</head>
+
+<body style="background: #f6f6d5">
+
+  <h2>组件切换与状态缓存&emsp;<sub><a style="text-decoration: none" href="../index.html">返回导航</a></sub></h2>
+  <div id="dynamic-component-demo">
+    <button
+      v-for="tab in tabs"
+      :key="tab"
+      :class="['tab-button', {'active': tab === currentTab}]"
+      @click="setCurrentTab(tab)"
+    >
+      {{tab}}
+    </button>
+    <keep-alive>
+      <component :is="currentTabComponent" class="tab"></component>
+    </keep-alive>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  Vue.component('tab-posts', {
+    data: function() {
+      return {
+        posts: [
+          {id: 1, title: 'post1', content: 'here is post1'},
+          {id: 2, title: 'post2', content: 'here is post2'},
+          {id: 3, title: 'post3', content: 'here is post3'}
+        ],
+        currentPost: null
+      }
+    },
+    template: `
+      <div class="posts-tab">
+        <ul class="posts-sidebar">
+          <li
+            v-for="post in posts"
+            :key="post.id"
+            :class="{'selected': post === currentPost}"
+            @click="currentPost = post"
+          >
+            <b>{{post.title}}</b>
+          </li>
+        </ul>
+        <div class="selected-post-container">
+          <div v-if="currentPost" class="selected-post">
+            <h3>{{currentPost.title}}</h3>
+            <div v-html="currentPost.content"></div>
+          </div>
+          <b v-else>
+            Click a post in left sidebar!
+          </b>
+        </div>
+      </div>
+    `
+  })
+
+  Vue.component('tab-achieves', {
+    template: `<div>here is content of tab-achieves</div>`
+  })
+  
+  const vm = new Vue({
+    el: '#dynamic-component-demo',
+    data: function() {
+      return {
+        tabs: ['posts', 'achieves'],
+        currentTab: 'posts'
+      }
+    },
+    computed: {
+      currentTabComponent: function() {
+        return 'tab-' + this.currentTab
+      }
+    },
+    methods: {
+      setCurrentTab: function(tab) {
+        this.currentTab = tab
+      }
+    }
+  })
+</script>
+</body>
+</html>
