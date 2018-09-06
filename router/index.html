@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue Router</title>
+  <style>
+    .router-link-active {
+      color: #fc0;
+    }
+  </style>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body style="background: #f6f6d5">
+  
+  <h2>Vue Router&emsp;<sub><a style="text-decoration: none" href="../index.html">返回导航</a></sub></h2>
+  
+  <div id="app">
+    <router-link to="./foo">go to foo</router-link>
+    <router-link to="./bar">go to bar</router-link>
+    <router-view></router-view>
+  </div>
+
+<script>
+  const NotFound = {template: '<div>404 NOT FOUND</div>'}
+  const Home = {template: '<div><h3>Home Page</h3></div>'}
+  const Foo = {template: '<div><h3>{{title}}</h3></div>', data() {return {title: 'Foo Page'}}}
+  const Bar = {template: '<div><h3>{{title}}</h3></div>', data() {return {title: 'Bar Page'}}}
+  
+  const router = new VueRouter({
+    routes: [
+      {path: '/router/index.html', component: Home},
+      {path: '/foo', component: Foo},
+      {path: '/bar', component: Bar}
+    ]
+  })
+
+  const app = new Vue({
+    el: '#app',
+    router: router,
+    // data: function() {
+    //   return {
+    //     currentRoute: window.location.pathname
+    //   }
+    // },
+    // computed: {
+    //   VueComponent: function() {
+    //     return routes[this.currentRoute] || NotFound
+    //   }
+    // },
+    // render: function(h) {
+    //   return h(this.VueComponent)
+    // }
+  })
+</script>
+</body>
+</html>
